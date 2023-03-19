@@ -1,3 +1,56 @@
+const btns = document.querySelectorAll('button');
+const resultDiv = document.getElementById('result');
+
+let playerScore = 0;
+let computerScore = 0;
+
+for (let btn of btns) {
+  btn.addEventListener('click', () => {
+    btnFunction(btn.getAttribute('data-choice'));
+  });
+}
+
+const btnFunction = (p) => {
+  resultDiv.innerHTML = '';
+
+  let computerChoice = getComputerChoice();
+  let playerChoice = p;
+  const { message, winner } = playRound(playerChoice, computerChoice);
+
+  if (winner == 'player') {
+    playerScore++;
+  } else if (winner == 'computer') {
+    computerScore++;
+  }
+  const roundResult = document.createElement('div');
+  roundResult.textContent = `${message}`;
+  resultDiv.appendChild(roundResult);
+
+  const playerDiv = document.createElement('div');
+  playerDiv.textContent = `Player Score: ${playerScore}`;
+  resultDiv.appendChild(playerDiv);
+
+  const computerDiv = document.createElement('div');
+  computerDiv.textContent = `Computer Score: ${computerScore}`;
+  resultDiv.appendChild(computerDiv);
+
+  if (playerScore >= 5 || computerScore >= 5) {
+    const finalResult = document.createElement('div');
+    if (playerScore == 5) {
+      finalResult.textContent =
+        'You won the game! Reload the page to play again!';
+    }
+    if (computerScore == 5) {
+      finalResult.textContent =
+        'Computer won the game! Reload the page to play again!';
+    }
+    resultDiv.appendChild(finalResult);
+    for (let btn of btns) {
+      btn.disabled = true;
+    }
+  }
+};
+
 const getComputerChoice = () => {
   const choices = ['rock', 'paper', 'scissor'];
   const random = Math.floor(Math.random() * choices.length);
@@ -8,7 +61,7 @@ const playRound = (playerSelection, computerSelection) => {
   playerSelection = playerSelection.toLowerCase();
   if (playerSelection === computerSelection) {
     return {
-      message: `It's a Tie! ${playerSelection} ties with ${computerSelection}`,
+      message: `It's a Tie! You both chose ${playerSelection}`,
       winner: 'none',
     };
   }
@@ -34,29 +87,3 @@ const playRound = (playerSelection, computerSelection) => {
     return { message: 'Invalid input', winner: 'none' };
   }
 };
-
-const game = () => {
-  let playerScore = 0;
-  let computerScore = 0;
-
-  for (let i = 0; i < 5; i++) {
-    let playerSelection = prompt();
-    const { message, winner } = playRound(playerSelection, getComputerChoice());
-    if (winner == 'player') {
-      playerScore++;
-    } else if (winner == 'computer') {
-      computerScore++;
-    }
-    console.log(message);
-  }
-
-  if (playerScore > computerScore) {
-    console.log('Player Wins!');
-  } else if (computerScore < playerScore) {
-    console.log('Computer Wins!');
-  } else {
-    console.log('Tie Game!');
-  }
-};
-
-game();
